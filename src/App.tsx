@@ -1,25 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import AddEditProduct from './components/AddEditProduct';
+import Login from './components/Login';
+import ProductList from './components/ProductList';
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { useCookies } from 'react-cookie';
 
 function App() {
+  const [cookies, setCookie, removeCookie] = useCookies(['accessToken', 'refreshToken']);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Router>
+      <Routes>
+          <Route path="/" element={< ProductList />} />
+          <Route path="/login" element={<Login/>}></Route>
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/addProduct" element={<AddEditProduct />} />
+          <Route path="/editProduct/:id" element={<AddEditProduct />} />
+        </Routes>
+      </Router>
   );
 }
 
