@@ -10,8 +10,8 @@ fetchApi.interceptors.response.use(
     return response.data;
   },
   (error: any) => {
+    // alert("!23")
     return Promise.reject(error);
   }
 );
-export { BASE_URL_STRAPI };
 export default fetchApi;
