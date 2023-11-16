@@ -1,28 +1,28 @@
 table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-  }
-  
-  td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-  }
-  
-  .fl-table thead th {
-    color: #ffffff;
-    background: #4FC3A1;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
 }
 
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.fl-table thead th {
+  color: #ffffff;
+  background: #4fc3a1;
+}
 
 .fl-table thead th:nth-child(odd) {
-    color: #ffffff;
-    background: #324960;
+  color: #ffffff;
+  background: #324960;
 }
 
 .fl-table tr:nth-child(even) {
-    background: #F8F8F8;
+  background: #f8f8f8;
 }
 
 .active {
@@ -46,5 +46,5 @@ table {
 }
 
 .pagination-button:hover {
-  text-decoration: underline; 
+  text-decoration: underline;
 }
