@@ -28,7 +28,7 @@ const ProductModal = (props: Props) => {
               <label>Description: {product.description}</label>
             </div>
             <div>
-              <label>Price: {product.price}</label>
+              <label>Price: Rs. {product.price.toLocaleString()}</label>
             </div>
             </>
           )}

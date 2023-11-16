@@ -20,13 +20,13 @@ import { FaRegEye } from "react-icons/fa";
 import Header from "./Layout/Header";
 
 const ProductList: React.FC = () => {
-  const productsSelector = useSelector(productSelectors.selectAll);
-  const dispatch = useAppDispatch();
-  const [showModal, setShowModal] = useState(false);
-  const [dataToShow, setDataToShow] = useState(null as Product | null);
-  const [isOpen, setIsOpen] = useState(false);
-  const [dataToDeleteId, setDataToDeleteId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+    const productsSelector = useSelector(productSelectors.selectAll);
+    const dispatch = useAppDispatch();
+    const [showModal, setShowModal] = useState(false)
+    const [dataToShow, setDataToShow] = useState(null as Product | null)
+    const [isOpen, setIsOpen] = useState(false)
+    const [dataToDeleteId, setDataToDeleteId] = useState<number | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -67,10 +67,10 @@ const ProductList: React.FC = () => {
     indexOfLastProduct
   );
 
-  const removeProduct = (productId: any) => {
-    getAllProduct();
+  const removeProduct = (productId: number) => {
+    getProductById(productId)
     dispatch(deleteProduct(productId));
-    toast("Xóa thành công");
+    toast.success("Xóa thành công");
   };
   // const sortEmployeesHandler = () => {
   //   const sortType = 'firstName';

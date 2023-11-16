@@ -12,6 +12,10 @@ import {
     selectId: (product) => product.id,
   });
   
+
+  // Define the asynchronous thunk for adding a product
+
+
   // Define the initial state using the entity adapter
   const initialState = productEntity.getInitialState({ selectProduct: null as Product | null, });
   
@@ -48,7 +52,7 @@ import {
   );
   // Define an async thunk to fetch products
   export const addNewProduct = createAsyncThunk<Product, Partial<Product>, AppThunkConfig>(
-    "product/addNewProduct",
+    "product/addProduct",
     async (newProduct, { extra: { api } }) => {
       const res = await api.post<Product, Product>("product", newProduct);
       return res;
@@ -56,7 +60,7 @@ import {
   );
   
   export const updateExistingProduct = createAsyncThunk<Product, { id: number, data: Partial<Product> }, AppThunkConfig>(
-    "product/updateExistingProduct",
+    "product/updateProduct",
     async ({ id, data }, { extra: { api } }) => {
       const res = await api.put<Product, Product>(`product/${id}`, data);
       return res;
@@ -64,8 +68,9 @@ import {
   );
   
   export const deleteProductById = createAsyncThunk<void, number, AppThunkConfig>(
-    "product/deleteProductById",
+    "product/deleteProduct",
     async (productId, { extra: { api } }) => {
+      console.log(productId);
       await api.delete<void>(`product/${productId}`);
     }
   );
@@ -80,6 +85,7 @@ import {
   export const getProductById = createAsyncThunk<Product, number, AppThunkConfig>(
     "product/getProductById",
     async (productId, { extra: { api } }) => {
+      console.log(productId);
       const res = await api.get<Product, any>(`product/${productId}`);
       return res;
     }
