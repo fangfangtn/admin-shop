@@ -4,6 +4,7 @@
   color: #fff; /* Màu chữ của header */
   padding: 15px; /* Khoảng cách giữa nội dung và mép của header */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ cho header */
+  width: 100%;
 }
 
 .container {

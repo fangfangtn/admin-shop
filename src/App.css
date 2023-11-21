@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+.main-content {
+  overflow-y: auto;
+  height: 100vh;
+  overflow-x: hidden; /* Loại bỏ cuộn ngang */
+}
+

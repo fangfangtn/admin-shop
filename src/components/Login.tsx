@@ -1,7 +1,6 @@
 // components/Login.tsx
 
 import React, { useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +24,7 @@ const Login = (chirdren: any) => {
       localStorage.setItem("refreshToken", response.data.refresh_token);
       localStorage.setItem("isLoggedIn", "true");
       toast("Đăng nhập thành công");
-      navigate("/products");
+      navigate("/admin/products");
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);
       toast("Đăng nhập thất bại !!!");

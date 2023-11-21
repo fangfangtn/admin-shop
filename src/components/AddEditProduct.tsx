@@ -15,21 +15,18 @@ import 'dayjs/locale/vi';
 import FileUpload from './FileUpload';
 
 const AddEditProduct: React.FC = () => {
-
- 
-
-  const [formData,setFormData] = useState<Product>({
-    id:0,
-    image:"",
-    name:"",
-    description:"",
-    price:0,
-    discount:0,
-    count:0,
-    sizes:[],
-    colors:[],
-    dateAdded:"",
-  } )
+  // const [formData,setFormData] = useState<Product>({
+  //   id:0,
+  //   image:"",
+  //   name:"",
+  //   description:"",
+  //   price:0,
+  //   discount:0,
+  //   count:0,
+  //   sizes:[],
+  //   colors:[],
+  //   dateAdded:"",
+  // } )
   const [image, setImage] = useState('');
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
@@ -53,7 +50,6 @@ const AddEditProduct: React.FC = () => {
       dispatch(getProductById(Number(id)) as any);
     }
   }, [dispatch, id]);
-  console.log(selectedProduct,"selectedProduct",id)
   // Set form fields based on the selected product (if in update mode)
   useEffect(() => {
     if (selectedProduct && id) {
@@ -72,18 +68,6 @@ const AddEditProduct: React.FC = () => {
     }
    
   }, [selectedProduct]);
-  const resetForm = () => {
-    setImage('');
-    setProductName('');
-    setDescription('');
-    setPrice(0);
-    setDiscount(0);
-    setDate('');
-    setCount(0);
-    setSizes([]);
-    setColors([]);
-    setFormErrors({});
-  };
 
   const saveOrUpdateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,7 +136,7 @@ const AddEditProduct: React.FC = () => {
       } else {
         // Add new product
         const addedProduct = await dispatch(addNewProduct(product) as any);
-        resetForm()
+        // resetForm()
         // Fetch the details of the newly added product
         await dispatch(getProductById(addedProduct.id) as any);
         toast.success('Thêm thành công')
@@ -345,7 +329,7 @@ const AddEditProduct: React.FC = () => {
                   Submit
                 </button>
                 <Link
-                  to="/products"
+                  to="/admin/products"
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline my-5"
                   type="button"
                 >
