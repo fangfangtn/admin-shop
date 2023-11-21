@@ -12,6 +12,7 @@ import {
   getProduct,
   productSelectors,
   getProductById,
+  deleteProductById,
 } from "../redux/slice/product";
 import { useAppDispatch } from "../redux/hook/redux";
 import { Product } from "../redux/slice/product/type";
@@ -67,16 +68,22 @@ const ProductList: React.FC = () => {
     indexOfLastProduct
   );
 
-  const removeProduct = (productId: number) => {
-    getProductById(productId)
-    dispatch(deleteProduct(productId));
-    toast.success("Xóa thành công");
+  const removeProduct = async (productId: any) => {
+    try {
+      // Fetch product details
+      await dispatch(getProductById(productId));
+  
+      // Once the product details are fetched, dispatch the delete action
+      dispatch(deleteProductById(productId));
+  
+      // Show success toast
+      toast.success("Xóa thành công");
+    } catch (error) {
+      // Handle errors, e.g., show an error toast
+      console.error("Error while removing product:", error);
+      toast.error("Đã xảy ra lỗi khi xóa sản phẩm");
+    }
   };
-  // const sortEmployeesHandler = () => {
-  //   const sortType = 'firstName';
-  //   const sortOrder = 'asc';
-  //   dispatch(sortEmployees({ sortType, sortOrder }));
-  // };
 
   const getAllProduct = () => {
     dispatch(getProduct());
@@ -101,70 +108,89 @@ const ProductList: React.FC = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="px-3 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mx-20"
         />
-        <table className="table table-bordered table-striped">
-          <thead>
-            <th> Image </th>
-            <th>
-              Product name
-              <Sort className="cursor-pointer" />
-            </th>
-            <th> Description </th>
-            <th> Price </th>
-            <th> Discount </th>
-            <th> CreatedAt</th>
-            <th> Actions </th>
-          </thead>
-          <tbody>
-            {currentdata
-              .filter(
-                (product: Product) =>
-                  product.name
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()) ||
-                  product.description
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase())
-              )
-              .map((product) => (
-                <tr key={product.id}>
-                  <td className="">
-                    <img
-                      src={product.image}
-                      alt=""
-                      className="w-[50px] h-[35px] mx-auto "
-                    />
-                  </td>
-                  <td> {product.name} </td>
-                  <td>{product.description}</td>
-                  <td>Rs. {product.price.toLocaleString()}</td>
-                  <td>{product.discount}</td>
-                  <td>{product.createdAt}</td>
-
-                  <td className=" ">
-                    <div className="flex">
-                      {" "}
-                      <Link to={`/editProduct/${product.id}`}>
-                        <EditPencil />
-                      </Link>
-                      <AiTwotoneDelete
-                        className="cursor-pointer"
-                        onClick={() => openModalDelete(product.id)}
-                        style={{ marginLeft: "30px" }}
+          <table className="table table-bordered table-striped">
+            <thead>
+              <th> Image </th>
+              <th>
+                Product name
+                <Sort className="cursor-pointer" />
+              </th>
+              <th> Description </th>
+              <th> Price </th>
+              <th> Discount </th>
+              <th>Count</th>
+              <th>Sizes</th>
+              <th>Colors</th>
+              <th> Created at</th>
+              <th> Actions </th>
+            </thead>
+            <tbody>
+              {currentdata
+                .filter(
+                  (product: Product) =>
+                    product.name
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    product.description
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                )
+                .map((product) => (
+                  <tr key={product.id}>
+                    <td className="">
+                      <img
+                        src={product.image}
+                        alt=""
+                        className="w-[50px] h-[35px] mx-auto "
                       />
-                      <FaRegEye
-                        className="cursor-pointer"
-                        onClick={() => viewProduct(product.id)}
-                        style={{ marginLeft: "30px" }}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-          {showModal && dataToShow !== null && (
-            <ProductModal onClose={closeModal} data={dataToShow} />
-          )}
-        </table>
+                    </td>
+                    <td> {product.name} </td>
+                    <td>{product.description}</td>
+                    <td>Rs. {product.price.toLocaleString()}</td>
+                    <td>{product.discount}%</td>
+                    <td>{product.count}</td>
+                    <td>
+                      {product.sizes?.map((size, index) => (
+                        <span key={index}>
+                          {size}
+                          {index < (product.sizes?.length || 0) - 1 && " "}
+                        </span>
+                      ))}
+                    </td>
+                    <td>
+                      {product.colors?.map((color, index) => (
+                        <span key={index}>
+                          {color}
+                          {index < (product.colors?.length || 0) - 1 && " "}
+                        </span>
+                      ))}
+                    </td>
+                    <td>{product.dateAdded}</td>
+                    <td className=" ">
+                      <div className="flex">
+                        {" "}
+                        <Link to={`/editProduct/${product.id}`}>
+                          <EditPencil />
+                        </Link>
+                        <AiTwotoneDelete
+                          className="cursor-pointer"
+                          onClick={() => openModalDelete(product.id)}
+                          style={{ marginLeft: "30px" }}
+                        />
+                        <FaRegEye
+                          className="cursor-pointer"
+                          onClick={() => viewProduct(product.id)}
+                          style={{ marginLeft: "30px" }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+            {showModal && dataToShow !== null && (
+              <ProductModal onClose={closeModal} data={dataToShow} />
+            )}
+          </table>
         <div className="pagination text-center space-y-5">
           <p>
             Page {currentPage} of {totalPages}

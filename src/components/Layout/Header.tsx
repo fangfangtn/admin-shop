@@ -19,7 +19,7 @@ const Header: React.FC = () => {
         <nav className="nav">
           <ul>
             <li>
-              <Link to="/logout">Logout</Link>
+              <Link to="/logout">Đăng xuất</Link>
             </li>
           </ul>
         </nav>

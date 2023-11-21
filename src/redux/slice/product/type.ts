@@ -5,9 +5,9 @@ export interface Product {
     description: string;
     price: number;
     discount: number;
-    dateAdded: string;
     count: number;
     sizes: string[];
     colors: string[];
+    dateAdded: string;
   }
   
