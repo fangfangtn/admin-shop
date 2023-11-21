@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axiox";
 
 const Login = (chirdren: any) => {
   const [formData, setFormData] = useState({ useremail: "", password: "" });
@@ -12,17 +13,13 @@ const Login = (chirdren: any) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://103.107.183.103:3000/users/login",
+      const response = await api.post(
+        "users/login",
         formData
       );
-      console.log(response.data, "response");
-      // const { accessToken, refreshToken } = response.data;
-
       // Lưu token vào cookies hoặc local storage nếu cần
       localStorage.setItem("accessToken", response.data.access_token);
       localStorage.setItem("refreshToken", response.data.refresh_token);
