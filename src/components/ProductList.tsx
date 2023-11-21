@@ -8,7 +8,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { Dialog, Transition } from "@headlessui/react";
 import { useSelector } from "react-redux";
 import {
-  deleteProduct,
   getProduct,
   productSelectors,
   getProductById,
@@ -18,7 +17,6 @@ import { useAppDispatch } from "../redux/hook/redux";
 import { Product } from "../redux/slice/product/type";
 import ProductModal from "./ProductModal";
 import { FaRegEye } from "react-icons/fa";
-import Header from "./Layout/Header";
 
 const ProductList: React.FC = () => {
     const productsSelector = useSelector(productSelectors.selectAll);
@@ -38,7 +36,7 @@ const ProductList: React.FC = () => {
     dispatch(getProductById(productId)).then((response: any) => {
       setDataToShow(response.data);
       setShowModal(true);
-      navigate("/products");
+      navigate("/admin/products");
     });
   };
 
@@ -91,10 +89,10 @@ const ProductList: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <h1 className="text-center font-bold text-[30px]"> List Products </h1>
       <div className="space-y-10 mx-20 mt-10">
         <Link
-          to="/addProduct"
+          to="/admin/products/addProduct"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline my-5"
         >
           {" "}
@@ -169,7 +167,7 @@ const ProductList: React.FC = () => {
                     <td className=" ">
                       <div className="flex">
                         {" "}
-                        <Link to={`/editProduct/${product.id}`}>
+                        <Link to={`/admin/products/editProduct/${product.id}`}>
                           <EditPencil />
                         </Link>
                         <AiTwotoneDelete

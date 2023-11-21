@@ -7,10 +7,6 @@ import { ToastContainer } from "react-toastify";
 import AppRouter from "./router/AppRouter";
 
 function App() {
-  const [cookies, setCookie, removeCookie] = useCookies([
-    "accessToken",
-    "refreshToken",
-  ]);
   return (
     <>
       <AppRouter />
