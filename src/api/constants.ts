@@ -1,7 +1,7 @@
 const NEXT_PUBLIC_PRODUCTION_URL = process.env.NEXT_PUBLIC_PRODUCTION_URL;
 const NEXT_PUBLIC_DEVELOPMENT_URL =
   process.env.NEXT_PUBLIC_DEVELOPMENT_URL ||
-  "http://103.107.183.103:3000/";
+  "https://api-ecm.5labs.io/";
 const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 const developmentMode =
   currentUrl.includes("localhost") ||
