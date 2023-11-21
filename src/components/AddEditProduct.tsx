@@ -5,7 +5,6 @@ import {
   addNewProduct,
   updateExistingProduct,
   getProductById,
-  getProduct,
 } from '../redux/slice/product';
 import { RootState } from '../redux/RootReducer';
 import { Product } from '../redux/slice/product/type';
@@ -13,8 +12,24 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
+import FileUpload from './FileUpload';
 
 const AddEditProduct: React.FC = () => {
+
+ 
+
+  const [formData,setFormData] = useState<Product>({
+    id:0,
+    image:"",
+    name:"",
+    description:"",
+    price:0,
+    discount:0,
+    count:0,
+    sizes:[],
+    colors:[],
+    dateAdded:"",
+  } )
   const [image, setImage] = useState('');
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
@@ -24,13 +39,13 @@ const AddEditProduct: React.FC = () => {
   const [count, setCount] = useState<number>(0);
   const [sizes, setSizes] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
   const { id } = useParams();
 
   const dispatch = useDispatch();
   const selectedProduct = useSelector((state: RootState) => state.product.selectProduct);
-
   useEffect(() => {
     // Fetch product details if in update mode
     if (id) {
@@ -38,10 +53,13 @@ const AddEditProduct: React.FC = () => {
       dispatch(getProductById(Number(id)) as any);
     }
   }, [dispatch, id]);
-
+  console.log(selectedProduct,"selectedProduct",id)
   // Set form fields based on the selected product (if in update mode)
   useEffect(() => {
-    if (selectedProduct) {
+    if (selectedProduct && id) {
+      // setFormData({
+      //  ...formData,image:selectedProduct.image, name:selectedProduct.name, description: selectedProduct.description, price: selectedProduct.price, discount: selectedProduct.discount, count: selectedProduct.count, sizes: selectedProduct.sizes as string[], colors: selectedProduct.colors as string[], dateAdded: dayjs(selectedProduct.dateAdded).format('YYYY-MM-DD')
+      // })
       setImage(selectedProduct.image);
       setProductName(selectedProduct.name);
       setDescription(selectedProduct.description);
@@ -52,12 +70,69 @@ const AddEditProduct: React.FC = () => {
       setSizes(selectedProduct.sizes as string[]);
       setColors(selectedProduct.colors as string[])
     }
+   
   }, [selectedProduct]);
+  const resetForm = () => {
+    setImage('');
+    setProductName('');
+    setDescription('');
+    setPrice(0);
+    setDiscount(0);
+    setDate('');
+    setCount(0);
+    setSizes([]);
+    setColors([]);
+    setFormErrors({});
+  };
 
   const saveOrUpdateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+        // Kiểm tra xem có trường nào để trống không
+        const errors: Record<string, string> = {};
+        if (!image.trim()) {
+          errors.image = 'Image không được để trống';
+          toast.error(errors.image)
+        }
+        if (!productName.trim()) {
+          errors.productName = 'Product Name không được để trống';
+          toast.error(errors.productName)
+        }
+        if (!description.trim()) {
+          errors.description = 'Description không được để trống';
+          toast.error(errors.description)
+        }
+        if (price <= 0) {
+          errors.price = 'Price phải là 1 số > 0';
+          toast.error(errors.price)
+        }
+        if (discount < 0) {
+          errors.discount = 'Discount phải là 1 số >= 0';
+          toast.error(errors.discount)
+        }
+        if ( count <= 0) {  
+          errors.count = 'Count phải là 1 số > 0';
+          toast.error(errors.count)
+        }
+        if (sizes.length === 0) {
+          toast.error('Bạn phải chọn ít nhất 1 size');
+          return;
+        }
+        if (colors.length === 0) {
+          toast.error('Bạn phải chọn ít nhất 1 màu');
+          return;
+        }
+        if (!date.trim()) {
+          errors.date = 'Date không được để trống';
+          toast.error(errors.date)
+        }
+    
+        // Nếu có lỗi, cập nhật trạng thái lỗi và không thực hiện submit
+        if (Object.keys(errors).length > 0) {
+          setFormErrors(errors);
+          return;
+        }
     const product: Partial<Product> = { 
-      image: image,
+      image: selectedFile ? URL.createObjectURL(selectedFile) : image,
       name: productName, 
       description: description,
       price: price,
@@ -77,13 +152,21 @@ const AddEditProduct: React.FC = () => {
       } else {
         // Add new product
         const addedProduct = await dispatch(addNewProduct(product) as any);
+        resetForm()
         // Fetch the details of the newly added product
         await dispatch(getProductById(addedProduct.id) as any);
         toast.success('Thêm thành công')
         navigate('/products');
       }
   };
-  
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileUpload = (file: File) => {
+    setSelectedFile(file);
+    // Optionally set the image state for preview
+    setImage(URL.createObjectURL(file));
+  };
+
 
   return (
     <div className="max-w-xs grid mx-auto w-full">
@@ -94,13 +177,8 @@ const AddEditProduct: React.FC = () => {
             <form>
             <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2 mt-5">Image:</label>
-                <textarea
-                  placeholder="Enter image"
-                  name="image"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                ></textarea>
+                <FileUpload onFileUpload={handleFileUpload} />
+                {selectedFile && <p>Selected File: {selectedFile.name}</p>}
               </div>
 
               <div>
@@ -109,7 +187,9 @@ const AddEditProduct: React.FC = () => {
                   type="text"
                   placeholder="Enter product name"
                   name="name"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                    formErrors.name ? 'border-red-500' : ''
+                  }`}
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                 />
@@ -120,7 +200,9 @@ const AddEditProduct: React.FC = () => {
                 <textarea
                   placeholder="Enter description"
                   name="description"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                    formErrors.description ? 'border-red-500' : ''
+                  }`}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
@@ -132,7 +214,9 @@ const AddEditProduct: React.FC = () => {
                   type="number"
                   placeholder="Enter price"
                   name="price"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                    formErrors.price ? 'border-red-500' : ''
+                  }`}
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
                 ></input>
@@ -144,7 +228,9 @@ const AddEditProduct: React.FC = () => {
                   type="number"
                   placeholder="Enter discount"
                   name="discount"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                    formErrors.discount ? 'border-red-500' : ''
+                  }`}
                   value={discount}
                   onChange={(e) => setDiscount(Number(e.target.value))}
                 ></input>
@@ -156,21 +242,12 @@ const AddEditProduct: React.FC = () => {
                   type="number"
                   placeholder="Enter count"
                   name="count"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                    formErrors.count ? 'border-red-500' : ''
+                  }`}
                   value={count}
                   onChange={(e) => setCount(Number(e.target.value))}
                 ></input>
-              </div>
-
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2 mt-5">Date Added:</label>
-                <input
-                  type="date"
-                  name="dateAdded"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                />
               </div>
 
               <div className='flex mt-5 space-x-2'>    
@@ -206,13 +283,13 @@ const AddEditProduct: React.FC = () => {
               <div className='flex mt-5 space-x-2'>    
                 <label className="block text-gray-700 text-sm font-bold mb-2">Colors:</label>
                 <div className="flex space-x-5">
-                  {['Green', 'Blue', 'Red', 'Yellow', 'Purple'].map((color) => (
-                    <div className="flex" key={color}>
+                  {['Green', 'Black', 'Red', 'Yellow', 'Purple'].map((color) => (
+                    <div className="flex items-center" key={color}>
                       <input
                         id={`color-checkbox-${color}`}
                         type="checkbox"
                         defaultValue=""
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="hidden"
                         checked={colors.includes(color)}
                         onChange={() => {
                           setColors((prevColors) =>
@@ -224,13 +301,39 @@ const AddEditProduct: React.FC = () => {
                       />
                       <label
                         htmlFor={`color-checkbox-${color}`}
-                        className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        className={`cursor-pointer w-6 h-6 flex items-center justify-center border border-gray-300 rounded-full focus:outline-none ${
+                          colors.includes(color)
+                            ? 'bg-' + color.toLowerCase() + '-500 border-transparent'
+                            : 'bg-gray-100 border-gray-300'
+                        }`}
                       >
-                        {color}
+                        {colors.includes(color) && (
+                          <div
+                            className="w-4 h-4 rounded-full bg-white"
+                            style={{ backgroundColor: color.toLowerCase() }}
+                          />
+                        )}
                       </label>
+                      <span className="ms-1 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {color}
+                      </span>
                     </div>
                   ))}
                 </div>
+              </div>
+
+
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2 mt-5">Date Added:</label>
+                <input
+                  type="date"
+                  name="dateAdded"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                    formErrors.date ? 'border-red-500' : ''
+                  }`}
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
               </div>
 
               <div className="flex">

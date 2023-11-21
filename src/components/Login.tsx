@@ -84,7 +84,7 @@ const Login = (chirdren: any) => {
                 type="submit"
                 className="bg-blue-600 text-white  px-4 py-2 rounded-md hover:bg-blue-800"
               >
-                Login
+                Đăng nhập
               </button>
             </div>
           </form>

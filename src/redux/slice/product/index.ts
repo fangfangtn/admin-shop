@@ -1,4 +1,5 @@
 import {
+  EntityId,
     createAsyncThunk,
     createEntityAdapter,
     createSlice,
@@ -17,7 +18,7 @@ import {
 
 
   // Define the initial state using the entity adapter
-  const initialState = productEntity.getInitialState({ selectProduct: null as Product | null, });
+  const initialState = productEntity.getInitialState({ selectProduct: null as Product | null });
   
   // Create a product slice
   const productSlice = createSlice({
@@ -35,6 +36,9 @@ import {
       },
     },
     extraReducers: (builder) => {
+      builder.addCase(deleteProductById.fulfilled, (state, action) => {
+        productEntity.removeOne(state, action.payload);
+      });
       builder.addCase(getProduct.fulfilled, (state, action) => {
         productEntity.setAll(state, action.payload);
       });
@@ -67,11 +71,11 @@ import {
     }
   );
   
-  export const deleteProductById = createAsyncThunk<void, number, AppThunkConfig>(
+  export const deleteProductById = createAsyncThunk<EntityId, number, AppThunkConfig>(
     "product/deleteProduct",
     async (productId, { extra: { api } }) => {
-      console.log(productId);
-      await api.delete<void>(`product/${productId}`);
+      await api.delete<Product, { id: EntityId }>(`product/${productId}`);
+      return productId; 
     }
   );
   
@@ -85,7 +89,6 @@ import {
   export const getProductById = createAsyncThunk<Product, number, AppThunkConfig>(
     "product/getProductById",
     async (productId, { extra: { api } }) => {
-      console.log(productId);
       const res = await api.get<Product, any>(`product/${productId}`);
       return res;
     }
