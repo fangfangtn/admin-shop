@@ -1,4 +1,4 @@
-const NEXT_PUBLIC_PRODUCTION_URL = process.env.NEXT_PUBLIC_PRODUCTION_URL;
+const NEXT_PUBLIC_PRODUCTION_URL = "https://api-ecm.5labs.io/";
 const NEXT_PUBLIC_DEVELOPMENT_URL =
   process.env.NEXT_PUBLIC_DEVELOPMENT_URL ||
   "https://api-ecm.5labs.io/";
