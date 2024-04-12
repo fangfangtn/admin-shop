@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import React, { useCallback } from "react";
+import { useDropzone } from "react-dropzone";
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -32,11 +32,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
 };
 
 const dropzoneStyles: React.CSSProperties = {
-  border: '2px dashed #ddd',
-  borderRadius: '4px',
-  padding: '20px',
-  textAlign: 'center',
-  cursor: 'pointer',
+  border: "2px dashed #ddd",
+  borderRadius: "4px",
+  padding: "20px",
+  textAlign: "center",
+  cursor: "pointer",
 };
 
 export default FileUpload;

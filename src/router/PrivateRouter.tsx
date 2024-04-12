@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Navigate, RouteProps } from "react-router-dom";
 
 const PrivateRouter: React.FC<RouteProps> = (props) => {
